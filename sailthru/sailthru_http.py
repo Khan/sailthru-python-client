@@ -26,7 +26,7 @@ def flatten_nested_hash(hash_table):
         return f
     return flatten(hash_table, False)
 
-def sailthru_http_request(url, data, method, file_data = None):
+def sailthru_http_request(url, data, method, file_data = None, timeout = None):
     """
     Perform an HTTP GET / POST / DELETE request
     """
@@ -36,12 +36,19 @@ def sailthru_http_request(url, data, method, file_data = None):
     params = data if method != 'POST' else None
     body = data if method == 'POST' else None
     try:
-	headers = { 'User-Agent': 'Sailthru API Python Client' }
-        response = requests.request(method, url, params = params, data = data, files = file_data, headers = headers)
+        headers = {
+            'User-Agent': 'Sailthru API Python Client' 
+        }
+        response = requests.request(method, url, 
+            params = params, 
+            data = data, 
+            files = file_data, 
+            headers = headers, 
+            timeout = timeout)
         if response.status_code is None:
             raise SailthruClientError(response.error)
         return SailthruResponse(response)
     except requests.HTTPError, e:
-	raise SailthruClientError(str(e))
+        raise SailthruClientError(str(e))
     except requests.RequestException, e:
-	raise SailthruClientError(str(e))
+        raise SailthruClientError(str(e))

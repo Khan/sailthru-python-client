@@ -58,10 +58,11 @@ class SailthruClient(object):
         client = SailthruCLient(api_key, api_secret)
     """
 
-    def __init__(self, api_key, secret, api_url=None):
+    def __init__(self, api_key, secret, api_url=None, timeout=None):
         self.api_key = api_key
         self.secret = secret
         self.api_url = api_url if (api_url is not None) else 'https://api.sailthru.com'
+        self.timeout = timeout if (timeout is not None) else 20
         self.user_agent = 'Sailthru API Python Client'
 
     def send(self, template, email, _vars=None, options=None, schedule_time=None):
@@ -650,7 +651,7 @@ class SailthruClient(object):
     
     def _http_request(self, url, data, method, file_data=None):
         file_data = file_data or {}
-        return sailthru_http_request(url, data, method, file_data)
+        return sailthru_http_request(url, data, method, file_data, self.timeout)
 
     def _prepare_json_payload(self, data):
         payload = {}
